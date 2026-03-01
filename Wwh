@@ -1,60 +1,86 @@
+
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
    Name = "FRIN TEAM | OVERDRIVE",
+   LoadingTitle = "Setting Frequency to 0.1s...",
+   LoadingSubtitle = "by Frin Team",
    ConfigurationSaving = { Enabled = false }
 })
 
+--// [ VARIABLES ]
 local UserText = "ezz"
 local AutoLoop = false
-local TickRate = 0.1
+local TickRate = 0.1 -- Your requested speed
 
+--// [ CORE LOGIC ]
 local function fireLalolLogic(payload)
     for _, remote in pairs(game:GetDescendants()) do
         if remote:IsA("RemoteFunction") then
             local fullName = remote:GetFullName()
-
-            if not string.find(fullName, "RobloxReplicatedStorage") and
+            
+            -- LALOL Safety Filters
+            if not string.find(fullName, "RobloxReplicatedStorage") and 
                not string.find(fullName, "DefaultChatSystemChatEvents") then
-
+                
                 task.spawn(function()
                     pcall(function()
+                        -- Rapid Invoke
                         remote:InvokeServer(payload)
                     end)
                 end)
             end
         end
     end
-end)
+end
 
+-- Ultra-Fast Loop Thread
 task.spawn(function()
     while true do
         if AutoLoop and UserText ~= "" then
             fireLalolLogic(UserText)
         end
-        task.wait(TickRate)
+        task.wait(TickRate) -- Fixed at 0.1s
     end
 end)
 
+--// [ UI SETUP ]
 local MainTab = Window:CreateTab("Overdrive", 4483362458)
+
+MainTab:CreateSection("Payload Configuration")
 
 MainTab:CreateInput({
    Name = "Target Message",
-   PlaceholderText = "Input text...",
+   PlaceholderText = "Input overwrite text...",
    RemoveTextAfterFocusLost = false,
    Callback = function(val)
        UserText = val
    end,
 })
 
+MainTab:CreateSection("Loop Settings")
+
 MainTab:CreateToggle({
-   Name = "Auto (0.1s)",
+   Name = "Rapid Auto-Restore (0.1s)",
    CurrentValue = false,
+   Flag = "RapidToggle",
    Callback = function(Value)
        AutoLoop = Value
+       if Value then
+           Rayfield:Notify({
+               Title = "Overdrive Active",
+               Content = "Overwriting every 0.1 seconds. Warning: High Traffic.",
+               Duration = 3
+           })
+       end
    end,
 })
 
-MainTab:CreateLabel("Rate: 0.1s")
+MainTab:CreateSection("Status")
+MainTab:CreateLabel("Current Rate: 0.1s")
 
-이거 코드 보는 애는 없겠지?
+Rayfield:Notify({
+   Title = "System Ready",
+   Content = "Speed set to 0.1s. Use toggle to start.",
+   Duration = 5
+})
